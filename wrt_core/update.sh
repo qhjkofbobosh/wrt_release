@@ -23,8 +23,7 @@ fi
 FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
 GOLANG_BRANCH="26.x"
-# THEME_SET="argon"
-THEME_SET="material"
+THEME_SET="argon"
 LAN_ADDR="192.168.10.1"
 
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
@@ -101,7 +100,6 @@ stage_pre_install_source_fixes() {
     add_quickfile
     update_lucky
     fix_rust_compile_error
-    update_smartdns
     update_mwan3_fw4
     update_diskman
     update_dockerman
@@ -110,10 +108,11 @@ stage_pre_install_source_fixes() {
     # update_argon
     set_default_lan 
     set_default_theme
+    update_argon
+    update_argon_config
     update_nginx_ubus_module
     check_default_settings
     install_opkg_distfeeds
-    fix_easytier_mk
     remove_attendedsysupgrade
     fix_kconfig_recursive_dependency
 }
@@ -128,7 +127,6 @@ stage_post_install_package_fixes() {
     verify_custom_feed_installed_paths
     docker_stack_sync_nftables_compat "$BUILD_DIR" "0"
     fix_cups_libcups_avahi_depends
-    fix_easytier_lua
     update_adguardhome
     update_script_priority
     update_geoip

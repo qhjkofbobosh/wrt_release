@@ -261,14 +261,6 @@ EOF
 }
 
 
-fix_easytier_mk() {
-    local mk_path="$(get_custom_feed_worktree_dir)/luci-app-easytier/easytier/Makefile"
-    if [ -f "$mk_path" ]; then
-        sed -i 's/!@(mips||mipsel)/!TARGET_mips \&\& !TARGET_mipsel/g' "$mk_path"
-    fi
-}
-
-
 remove_tweaked_packages() {
     local target_mk="$BUILD_DIR/include/target.mk"
     if [ -f "$target_mk" ]; then

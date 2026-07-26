@@ -3,8 +3,8 @@
 
 set_build_signature() {
     local file="$BUILD_DIR/feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
-    if [ -d "$(dirname "$file")" ] && [ -f $file ]; then
-        sed -i "s/(\(luciversion || ''\))/(\1) + (' \/ build by ZqinKing')/g" "$file"
+    if [ -d "$(dirname "$file")" ] && [ -f "$file" ]; then
+        sed -i "s/(\(luciversion || ''\))/\1 + (' \/ build by ZqinKing')/g" "$file"
     fi
 }
 
@@ -38,16 +38,16 @@ update_nginx_ubus_module() {
 }
 
 set_default_theme() {
-    local theme="${THEME_SET:-material}"
+    local theme="${THEME_SET:-argon}"
     local uci_defaults_dir="$BUILD_DIR/files/etc/uci-defaults"
     local theme_script="$uci_defaults_dir/99-default-theme"
 
     mkdir -p "$uci_defaults_dir"
     cat >"$theme_script" <<EOF
 #!/bin/sh
-# 首次启动设置默认 LuCI 主题，避免与 iStoreX 冲突。
-uci set luci.main.mediaurlbase='/luci-static/${theme}'
-uci commit luci
+# 首次启动设置默认 LuCI 主题，兼容 Argon 与 iStoreX。
+uci -q set luci.main.mediaurlbase='/luci-static/${theme}'
+uci -q commit luci
 EOF
     chmod +x "$theme_script"
     echo "已注入默认主题 uci-defaults: ${theme}"

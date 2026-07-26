@@ -70,31 +70,6 @@ add_timecontrol() {
 }
 
 
-update_smartdns() {
-    local SMARTDNS_REPO="https://github.com/ZqinKing/openwrt-smartdns.git"
-    local SMARTDNS_DIR="$BUILD_DIR/feeds/packages/net/smartdns"
-    local LUCI_APP_SMARTDNS_REPO="https://github.com/pymumu/luci-app-smartdns.git"
-    local LUCI_APP_SMARTDNS_DIR="$BUILD_DIR/feeds/luci/applications/luci-app-smartdns"
-
-    echo "正在更新 smartdns..."
-    rm -rf "$SMARTDNS_DIR"
-    if ! git_retry clone --depth=1 "$SMARTDNS_REPO" "$SMARTDNS_DIR"; then
-        echo "错误：从 $SMARTDNS_REPO 克隆 smartdns 仓库失败" >&2
-        exit 1
-    fi
-
-    install -Dm644 "$BASE_PATH/patches/100-smartdns-optimize.patch" "$SMARTDNS_DIR/patches/100-smartdns-optimize.patch"
-    sed -i '/define Build\/Compile\/smartdns-ui/,/endef/s/CC=\$(TARGET_CC)/CC="\$(TARGET_CC_NOCACHE)"/' "$SMARTDNS_DIR/Makefile"
-
-    echo "正在更新 luci-app-smartdns..."
-    rm -rf "$LUCI_APP_SMARTDNS_DIR"
-    if ! git_retry clone --depth=1 "$LUCI_APP_SMARTDNS_REPO" "$LUCI_APP_SMARTDNS_DIR"; then
-        echo "错误：从 $LUCI_APP_SMARTDNS_REPO 克隆 luci-app-smartdns 仓库失败" >&2
-        exit 1
-    fi
-}
-
-
 update_mwan3_fw4() {
     local mwan3_repo="https://github.com/dl12345/mwan3.git"
     local luci_app_mwan3_repo="https://github.com/dl12345/luci-app-mwan3.git"
@@ -239,15 +214,15 @@ add_quickfile() {
 
 
 update_argon() {
-    local repo_url="https://github.com/ZqinKing/luci-theme-argon.git"
+    local repo_url="https://github.com/jerrykuku/luci-theme-argon.git"
     local dst_theme_path="$BUILD_DIR/feeds/luci/themes/luci-theme-argon"
     local tmp_dir
     tmp_dir=$(mktemp -d)
 
-    echo "正在更新 argon 主题..."
+    echo "正在更新 Argon 主题..."
 
     if ! git_retry clone --depth 1 "$repo_url" "$tmp_dir"; then
-        echo "错误：从 $repo_url 克隆 argon 主题仓库失败" >&2
+        echo "错误：从 $repo_url 克隆 Argon 主题仓库失败" >&2
         rm -rf "$tmp_dir"
         exit 1
     fi
@@ -259,6 +234,26 @@ update_argon() {
     echo "luci-theme-argon 更新完成"
 }
 
+update_argon_config() {
+    local repo_url="https://github.com/jerrykuku/luci-app-argon-config.git"
+    local dst_app_path="$BUILD_DIR/feeds/luci/applications/luci-app-argon-config"
+    local tmp_dir
+    tmp_dir=$(mktemp -d)
+
+    echo "正在更新 Argon 配置插件..."
+
+    if ! git_retry clone --depth 1 "$repo_url" "$tmp_dir"; then
+        echo "错误：从 $repo_url 克隆 Argon 配置插件失败" >&2
+        rm -rf "$tmp_dir"
+        exit 1
+    fi
+
+    rm -rf "$dst_app_path"
+    rm -rf "$tmp_dir/.git"
+    mv "$tmp_dir" "$dst_app_path"
+
+    echo "luci-app-argon-config 更新完成"
+}
 
 update_package() {
     # 根据上游版本信息刷新包版本与哈希。

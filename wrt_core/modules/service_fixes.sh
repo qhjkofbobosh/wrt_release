@@ -25,17 +25,6 @@ boot() {
     sed -i '/drop_caches/d' /etc/crontabs/root
     echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
 
-    sed -i '/wireguard_watchdog/d' /etc/crontabs/root
-
-    local wg_ifname=$(wg show | awk '/interface/ {print $2}')
-
-    if [ -n "$wg_ifname" ]; then
-        echo "*/15 * * * * /usr/bin/wireguard_watchdog" >>/etc/crontabs/root
-        uci set system.@system[0].cronloglevel='9'
-        uci commit system
-        /etc/init.d/cron restart
-    fi
-
     crontab /etc/crontabs/root
 }
 EOF
@@ -108,14 +97,6 @@ update_geoip() {
                 fi
             fi
         fi
-    fi
-}
-
-
-fix_easytier_lua() {
-    local file_path="$(get_custom_feed_package_dir)/luci-app-easytier/luasrc/model/cbi/easytier.lua"
-    if [ -f "$file_path" ]; then
-        sed -i 's/util.pcdata/xml.pcdata/g' "$file_path"
     fi
 }
 
